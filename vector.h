@@ -51,13 +51,11 @@ namespace dsa {
 		Rank insert(T const& e) { return insert(_size, e); } //默认作为末元素插入
 		void sort(Rank lo, Rank hi); //对[lo, hi)排序
 		void sort() { sort(0, _size); } //整体排序
-		void unsort(Rank lo, Rank hi); //对[lo, hi)置乱
-		void unsort() { unsort(0, _size); } //整体置乱
 		Rank deduplicate(); //无序去重
 		Rank uniquify(); //有序去重
 	// 遍历
-		void traverse(void (*) (T&)); //遍历（使用函数指针，只读或局部性修改）
-		template <typename VST> void traverse(VST&); //遍历（使用函数对象，可全局性修改）
+		void traverse(void (*) (T& visit)); //遍历（使用函数指针，只读或局部性修改）
+		template <class BinFunc> void traverse(BinFunc& visit); //遍历（使用函数对象，可全局性修改）
 	};
 	template<typename T>
 	inline void Vector<T>::copyFrom(T const* A, Rank lo, Rank hi){
@@ -71,7 +69,7 @@ namespace dsa {
 		if(_size<_capacity) return;//尚未满的时候 不用扩容
 		_capacity = max(_capacity, DEFAULT_CAPACITY);
 		T* oldElem = _elem;
-		_elem = new T[_capacity<<1];
+		_elem = new T[_capacity<<=1];
 		for(int i=0;i<_size;i++)
 			_elem[i] = oldElem[i];
 		delete[] oldElem;
@@ -87,12 +85,102 @@ namespace dsa {
 			_elem[i] = oldElem[i];
 		delete[] oldElem;
 	}
-	
+
+	template<typename T>
+	inline bool Vector<T>::bubble(Rank lo, Rank hi)
+	{
+		bool sorted = true;
+		while (++lo < hi)
+			if (_elem[lo - 1] > _elem[lo])
+			{
+				sorted = false;
+				swap(_elem[lo - 1], _elem[lo]);
+			}
+		return sorted;
+	}
+
+	template<typename T>
+	inline void Vector<T>::bubbleSort(Rank lo, Rank hi)
+	{
+		while (!bubble(lo, hi--));
+	}
+
+	template<typename T>
+	inline Rank Vector<T>::maxItem(Rank lo, Rank hi)
+	{
+		Rank max = lo;
+		for (++lo; lo < hi; ++lo)
+			if (_elem[lo] > _elem[max])
+				max = lo;
+		return max;
+	}
+
+	template<typename T>
+	inline void Vector<T>::selectionSort(Rank lo, Rank hi)
+	{
+		while (hi > lo)
+		{
+			swap(_elem[hi = maxItem(lo, hi)], _elem[lo++]);
+		}
+	}
+
+	template<typename T>
+	inline void Vector<T>::merge(Rank lo, Rank mi, Rank hi)
+	{
+		T *A=_elem+lo;
+		int lb=mi-lo;
+		T *B=new T[lb];
+		for(Rank i=0;i<lb;B[i]=A[i++];)
+		int lc=hi-mi;
+		T *C=_elem+mi;
+		for(Rank i=0,j=0,k=0;(j<lb)||(k<lc);){
+			if((j<lb)&&(!(k<lc)||(B[j]<C[k]))) A[i++]=B[j++]; 
+			if((k<lc)&&(!(j<lb)||(C[k]<B[j]))) A[i++]=C[k++];
+		}
+		delete []B;
+	}
+
+	template<typename T>
+	inline void Vector<T>::mergeSort(Rank lo, Rank hi)
+	{
+		if(hi-lo<2) return;
+		int mi=(lo+hi)>>1;
+		mergeSort(lo,mi);
+		mergeSort(mi,hi);
+		merge(lo,mi,hi);
+	}
+	template<typename T>
+	inline void Vector<T>::quickSort(Rank lo, Rank hi)
+	{
+		if(hi-lo<2) return;
+		int mi=(lo+hi)>>1;
+		swap(_elem[mi],_elem[hi]);
+		int i=lo,j=hi-1;
+		while(i<j){
+			while(_elem[i]<_elem[hi]) i++;
+			while(_elem[j]>_elem[hi]) j--;
+			if(i<j) swap(_elem[i++],_elem[j--]);
+		}
+		swap(_elem[i],_elem[hi]);
+		quickSort(lo,i-1);
+		quickSort(i+1,hi);
+	}
+
 	template<typename T>
 	inline Rank Vector<T>::find(T const& e, Rank lo, Rank hi) const//输入敏感的算法
 	{
 		while ((lo < hi--) && (e != _elem[hi]));
 		return hi;
+	}
+
+	template<typename T>
+	inline Rank Vector<T>::search(T const& e, Rank lo, Rank hi) const
+	 {
+		while (1 < hi - lo) {
+			Rank mi = (lo + hi) >> 1;
+			(e < _elem[mi]) ? hi = mi : lo = mi;
+		}
+		return (e == _elem[lo]) ? lo : -1;
 	}
 
 	template<typename T>
@@ -144,6 +232,49 @@ namespace dsa {
 		_elem[r] = e;
 		_size++;
 		return r;
+	}
+
+	template<typename T>
+	inline void Vector<T>::sort(Rank lo, Rank hi)
+	{
+		quickSort(lo, hi);
+	}
+
+	template<typename T>
+	inline Rank Vector<T>::deduplicate()
+	{
+		int oldSize = _size;
+		Rank i = 1;
+		while (i < _size)
+			if (_elem[i] == _elem[i - 1]) remove(i--);
+			else i++;
+		return oldSize - _size;
+	}
+
+	template<typename T>
+	inline Rank Vector<T>::uniquify()
+	{
+		Rank i=0,j=0;
+		while(++j<_size)
+			if(_elem[i]!=_elem[j]) _elem[++i]=_elem[j];
+		_size=++i;
+		shrink();
+		return j-i;
+	}
+
+	template<typename T>
+	inline void Vector<T>::traverse(void(*)(T& visit))
+	{
+		for(int i=0;i<_size;i++)
+			(*visit)(_elem[i]);
+	}
+
+
+	template<typename T>
+	template<class BinFunc>
+	inline void Vector<T>::traverse(BinFunc& visit){
+		for(int i=0;i<_size;i++)
+			visit(_elem[i]);
 	}
 
 }

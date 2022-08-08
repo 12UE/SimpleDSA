@@ -7,7 +7,8 @@
 #include "SimpleDSA.h"
 #include "SimpleDSADlg.h"
 #include "afxdialogex.h"
-
+#include<iostream>
+#include<vector>
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -89,8 +90,37 @@ HCURSOR CSimpleDSADlg::OnQueryDragIcon()
 
 
 
+
 void CSimpleDSADlg::OnBnClickedButton1()
 {
-	dsa::Vector<int> v;
-	v.insert(2);
+	auto print = [](int number) {
+		std::cout << number << " ";
+	};
+	AllocConsole();
+	freopen("CONOUT$", "w+t", stdout);// Application Writing
+	freopen("CONIN$", "r+t", stdin); // Apply for reading
+	dsa::Vector<int> v(3);
+	//随机放入20个数
+	for (int i = 0; i < 10; i++)
+	{
+		v.insert(rand() % 20);
+	}
+	//插入10个有序数
+	for (int i = 0; i < 10; i++)
+	{
+		v.insert(i);
+	}
+	std::cout<<"data"<<std::endl;	
+	v.traverse(print);
+	//排序
+	v.sort();
+	std::cout << std::endl << "sort" << std::endl;
+	v.traverse(print);
+	//去除重复数据
+	v.deduplicate();
+	std::cout << std::endl << "duplicate" << std::endl;
+	v.traverse(print);
+	std::cout << std::endl << "remove" << std::endl;
+	v.remove(5);
+	v.traverse(print);
 }
