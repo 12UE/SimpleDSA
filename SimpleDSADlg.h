@@ -32,4 +32,5 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedButton1();
+	SimpleClock& GlobalClock = SimpleClock::GetInstance();
 };

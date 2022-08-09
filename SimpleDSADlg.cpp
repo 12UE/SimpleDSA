@@ -95,32 +95,35 @@ void CSimpleDSADlg::OnBnClickedButton1()
 {
 	auto print = [](int number) {
 		std::cout << number << " ";
+		return;
 	};
 	AllocConsole();
 	freopen("CONOUT$", "w+t", stdout);// Application Writing
 	freopen("CONIN$", "r+t", stdin); // Apply for reading
-	dsa::Vector<int> v(3);
-	//随机放入20个数
-	for (int i = 0; i < 10; i++)
+
+	dsa::List<int> list;
+
+	for (int i = 0; i < 100; i++)
 	{
-		v.insert(rand() % 20);
+		list.emplace_back(list.last(), rand() % 100);
 	}
 	//插入10个有序数
 	for (int i = 0; i < 10; i++)
 	{
-		v.insert(i);
+		list.emplace_back(list.last(), i);
 	}
-	std::cout<<"data"<<std::endl;	
-	v.traverse(print);
+	std::cout << "data" << std::endl;
+	list.traverse(print);
 	//排序
-	v.sort();
+	auto begin = GlobalClock();
+	list.sort();
+	auto duration = GlobalClock() - begin;
+	std::cout << std::endl;
+	std::cout << "sort time:" << duration << std::endl;
 	std::cout << std::endl << "sort" << std::endl;
-	v.traverse(print);
+	list.traverse(print);
 	//去除重复数据
-	v.deduplicate();
+	list.deduplicate();
 	std::cout << std::endl << "duplicate" << std::endl;
-	v.traverse(print);
-	std::cout << std::endl << "remove" << std::endl;
-	v.remove(5);
-	v.traverse(print);
+	list.traverse(print);
 }

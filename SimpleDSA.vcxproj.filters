@@ -36,10 +36,16 @@
     <ClInclude Include="pch.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="vector.h">
+    <ClInclude Include="Vector.h">
       <Filter>Containers</Filter>
     </ClInclude>
-    <ClInclude Include="algo.h">
+    <ClInclude Include="Algo.h">
+      <Filter>Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleClock.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="List.h">
       <Filter>Containers</Filter>
     </ClInclude>
   </ItemGroup>
