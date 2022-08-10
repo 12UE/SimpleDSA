@@ -193,13 +193,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Algo.h" />
+    <ClInclude Include="Containers.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="List.h" />
+    <ClInclude Include="NumericAlgo.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SimpleClock.h" />
     <ClInclude Include="SimpleDSA.h" />
     <ClInclude Include="SimpleDSADlg.h" />
+    <ClInclude Include="Stack.h" />
+    <ClInclude Include="stack_list.h" />
+    <ClInclude Include="stack_vector.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Vector.h" />
   </ItemGroup>

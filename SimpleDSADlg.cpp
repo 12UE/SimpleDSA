@@ -9,6 +9,7 @@
 #include "afxdialogex.h"
 #include<iostream>
 #include<vector>
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -88,42 +89,28 @@ HCURSOR CSimpleDSADlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+void InitConsoler() {
+	AllocConsole();
+	freopen("CONOUT$", "w+t", stdout);// Application Writing
+	freopen("CONIN$", "r+t", stdin); // Apply for reading
+}
 
 
 
 void CSimpleDSADlg::OnBnClickedButton1()
 {
+	InitConsoler();
 	auto print = [](int number) {
 		std::cout << number << " ";
 		return;
 	};
-	AllocConsole();
-	freopen("CONOUT$", "w+t", stdout);// Application Writing
-	freopen("CONIN$", "r+t", stdin); // Apply for reading
-
-	dsa::List<int> list;
-
-	for (int i = 0; i < 10; i++)
-	{
-		list.emplace_back(list.last(), rand() % 100);
+	dsa::Stack<int> stack;
+	for (int i = 0; i < 30; i++) {
+		stack.push(i);
 	}
-	//插入10个有序数
-	for (int i = 0; i < 10; i++)
-	{
-		list.emplace_back(list.last(), i);
+	stack.traverse(print);
+	std::cout<<"pop"<<std::endl;
+	for (int i = 0; i < 30; i++) {
+		print(stack.pop());
 	}
-	std::cout << "data" << std::endl;
-	list.traverse(print);
-	//排序
-	auto begin = GlobalClock();
-	list.sort();
-	auto duration = GlobalClock() - begin;
-	std::cout << std::endl;
-	std::cout << "sort time:" << duration << std::endl;
-	std::cout << std::endl << "sort" << std::endl;
-	list.traverse(print);
-	//去除重复数据
-	list.deduplicate();
-	std::cout << std::endl << "duplicate" << std::endl;
-	list.traverse(print);
 }

@@ -1,5 +1,4 @@
 #pragma once
-#include"algo.h"
 namespace dsa {
 	using Rank = int; //秩
 #define DEFAULT_CAPACITY  3 //默认的初始容量（实际应用中可设置为更大）
@@ -146,6 +145,11 @@ namespace dsa {
 		mergeSort(lo,mi);
 		mergeSort(mi,hi);
 		merge(lo,mi,hi);
+	}
+	template<typename T>
+	inline void Vector<T>::heapSort(Rank lo, Rank hi)
+	{
+		
 	}
 	template<typename T>
 	inline void Vector<T>::quickSort(Rank lo, Rank hi)

@@ -55,9 +55,12 @@ namespace dsa {
 	   ListNodePosi<T> last() const { return trailer->pred; } //末节点位置
 	   bool valid(ListNodePosi<T> p) //判断位置p是否对外合法
 	   { return p && (trailer != p) && (header != p); } //将头、尾节点等同于nullptr
+	   int Inversion();//逆序对的个数
 	   ListNodePosi<T> find(T const& e) const //无序列表查找
 	   { return find(e, _size, trailer); }
 	   ListNodePosi<T> find(T const& e, int n, ListNodePosi<T> p) const; //无序区间查找
+	   template<class BinPredicate>
+	   ListNodePosi<T> find_if(ListNodePosi<T> begin, ListNodePosi<T> end, BinPredicate func);
 	   ListNodePosi<T> search(T const& e) const //有序列表查找
 	   { return search(e, _size, trailer); }
 	   ListNodePosi<T> search(T const& e, int n, ListNodePosi<T> p) const; //有序区间查找
@@ -152,7 +155,7 @@ namespace dsa {
 	}
 
 	template<typename T>
-	inline void List<T>::insertionSort(ListNodePosi<T> p, int n){
+	inline void List<T>::insertionSort(ListNodePosi<T> p, int n){//这是一种输入敏感的算法
 		for (int i = 0; i < n; i++) {
 			emplace_back(search(p->data, i, p), p->data);
 			p = p->succ;
@@ -193,6 +196,18 @@ namespace dsa {
 			p = p->succ;
 		}
 		return p->data;
+	}
+
+	template<typename T>
+	inline int List<T>::Inversion()//逆序对的个数
+	{
+		int inversion = 0;
+		for (auto p = first(); p != trailer; p = p->succ) {
+			for (auto q = p->succ; q != trailer; q = q->succ) {
+				if (p->data > q->data) inversion++;
+			}
+		}
+		return inversion;
 	}
 
 	template<typename T>
@@ -327,6 +342,19 @@ namespace dsa {
 	}
 
 
+
+	template<typename T>
+	template<class BinPredicate>
+	inline ListNodePosi<T> List<T>::find_if(ListNodePosi<T> begin, ListNodePosi<T> end, BinPredicate func){
+		auto p = first();
+		for (auto r = 0; i < _size; r++) {
+			if (func(p)) {
+				return p;
+			}else {
+				p = p->succ;
+			}
+		}
+	}
 
 	template<typename T>
 	template<typename VST>

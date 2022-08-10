@@ -60,6 +60,4 @@ namespace dsa {
 	T rand() {
 		
 	}
-	
-
 }

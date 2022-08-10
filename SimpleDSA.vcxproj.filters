@@ -16,6 +16,9 @@
     <Filter Include="Containers">
       <UniqueIdentifier>{45ab1ff1-5fb8-440a-8f6f-48e7bd7e03fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Containers\Stack">
+      <UniqueIdentifier>{1a25aaf5-da74-437f-bb7f-7e613ed8ee8a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SimpleDSA.h">
@@ -46,6 +49,21 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="List.h">
+      <Filter>Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="stack_vector.h">
+      <Filter>Containers\Stack</Filter>
+    </ClInclude>
+    <ClInclude Include="Stack.h">
+      <Filter>Containers\Stack</Filter>
+    </ClInclude>
+    <ClInclude Include="stack_list.h">
+      <Filter>Containers\Stack</Filter>
+    </ClInclude>
+    <ClInclude Include="Containers.h">
+      <Filter>Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="NumericAlgo.h">
       <Filter>Containers</Filter>
     </ClInclude>
   </ItemGroup>
