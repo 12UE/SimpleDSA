@@ -14,12 +14,14 @@ namespace dsa {
 	// 操作接口
 	   ListNodePosi<T> insertAsPred(T const& e) {//紧靠当前节点之前插入新节点
 			ListNodePosi<T> x = new ListNode(e, pred, this);
-			pred->succ = x; pred = x;
+			pred->succ = x;
+			pred = x;
 			return x;
 	   }
 	   ListNodePosi<T> insertAsSucc(T const& e) { //紧随当前节点之后插入新节点
 			ListNodePosi<T> x = new ListNode(e, this, succ);
-			succ->pred = x; succ = x;
+			succ->pred = x; 
+			succ = x;
 			return x;
 	   }
 	};
@@ -30,13 +32,12 @@ namespace dsa {
 	protected:
 	   void init(); //列表创建时的初始化
 	   int clear(); //清除所有节点
-	   void copyNodes(ListNodePosi<T>, int); //复制列表中自位置p起的n项
-	   ListNodePosi<T> merge(ListNodePosi<T>, int, List<T> &, ListNodePosi<T>, int); //归并
+	   void copyNodes(ListNodePosi<T> p, int n); //复制列表中自位置p起的n项
+	   ListNodePosi<T> merge(ListNodePosi<T> p, int n, List<T>& L, ListNodePosi<T> q, int m); //归并
 	   void mergeSort() { mergeSort(first(), _size) };
 	   void mergeSort(ListNodePosi<T> &p , int n); //对从p开始连续的n个节点归并排序
 	   void selectionSort(ListNodePosi<T> p, int n); //对从p开始连续的n个节点选择排序
-	   void insertionSort(ListNodePosi<T>, int); //对从p开始连续的n个节点插入排序
-	   void radixSort(ListNodePosi<T>, int); //对从p开始连续的n个节点基数排序
+	   void insertionSort(ListNodePosi<T> p, int n); //对从p开始连续的n个节点插入排序
 
 	public:
 	// 构造函数
@@ -66,7 +67,7 @@ namespace dsa {
 	   ListNodePosi<T> insertAsFirst(T const& e); //将e当作首节点插入
 	   ListNodePosi<T> insertAsLast(T const& e); //将e当作末节点插入
 	   ListNodePosi<T> emplace_back(ListNodePosi<T> p, T const& e); //将e当作p的后继插入
-	   ListNodePosi<T> emplace_front(ListNodePosi<T> p,T const& e); //将e当作p的前驱插入
+	   ListNodePosi<T> emplace_front(ListNodePosi<T> p,T const& e); //将e当作p的前驱插入 insetBefore
 	   T remove(ListNodePosi<T> p); //删除合法位置p处的节点,返回被删除节点
 	   Rank remove(ListNodePosi<T> p, int n); //删除p及其n-1个后继
 	   void merge(List<T>& L) { merge(header->succ, _size, L, L.header->succ, L._size); } //全列表归并
@@ -79,6 +80,8 @@ namespace dsa {
 	   void traverse(void (*) (T& visit)); //遍历，依次实施visit操作（函数指针，只读或局部性修改）
 	   template < typename VST> //操作器
 	   void traverse(VST& visit); //遍历，依次实施visit操作（函数对象，可全局性修改）
+	   template<class VST>
+	   void traverse(ListNodePosi<T> begin,ListNodePosi<T> end,VST & visit) const;
 
 	}; //List
 
@@ -95,8 +98,9 @@ namespace dsa {
 	inline int List<T>::clear()
 	{
 	   int oldSize = _size;
-	   while (0 < _size)
-		  remove(header->succ);
+	   while (0 < _size) {
+		   remove(header->succ);
+	   }
 	   return oldSize;
 	}
 
@@ -113,42 +117,30 @@ namespace dsa {
 	template<typename T>
 	inline ListNodePosi<T> List<T>::merge(ListNodePosi<T> p, int n, List<T>& L, ListNodePosi<T> q, int m)
 	{
-		 // assert:  this.valid(p) && rank(p) + n <= size && this.sorted(p, n)
-		 //          L.valid(q) && rank(q) + m <= L._size && L.sorted(q, m)
-		 // 注意：在被mergeSort()调用时，this == &L && rank(p) + n = rank(q)
-		 ListNodePosi<T> pp = p->pred; //归并之后p可能不再指向首节点，故需先记忆，以便在返回前更新
-		 while ((0 < m) && (q != p)) //q尚未出界（或在mergeSort()中，p亦尚未出界）之前
-		    if ((0 < n) && (p->data <= q->data)){
-				p = p->succ; n--; 
-			}else{
-				emplace_back(p,L.remove((q = q->succ)->pred)); m--;
-			}
-		 return pp->succ; //更新的首节点
+		ListNodePosi<T> pp = p->pred; //归并之后p可能不再指向首节点，故需先记忆，以便在返回前更新
+		while ((0 < m) && (q != p)) //q尚未出界（或在mergeSort()中，p亦尚未出界）之前
+		   if ((0 < n) && (p->data <= q->data)) //若p尚未出界且v(p) <= v(q)，则
+		      { p = p->succ; n--; } //p直接后移，即完成归入
+		   else //否则，将q转移至p之前，以完成归入
+		      { emplace_front(p, L.remove((q = q->succ)->pred)); m--; }
+		return pp->succ; //更新的首节点
 	}
 
 	template<typename T>
 	inline void List<T>::mergeSort(ListNodePosi<T>& p, int n)
 	{
-		 // assert:  this.valid(p) && rank(p) + n <= size && this.sorted(p, n)
-		 if (1 < n) //若n > 1，则
-		 {
-			 int m = n >> 1; //m = n / 2
-			 ListNodePosi<T> q = nullptr;
-			 while (m--){
-				if(p){
-					q = p->succ;
-				}else{
-					break;
-				}
-			 }
-			 mergeSort(p, n - m); //对左半部分递归排序
-			 mergeSort(q, m); //对右半部分递归排序
-			 merge(p, n, *this, q, m); //归并
-		 }
+		if (n < 2) return;
+		int m = n >> 1;
+		ListNodePosi<T> q = p;
+		for (int i = 0; i < m; i++) {
+			q = q->succ;
+		}
+		mergeSort(p, m);
+		mergeSort(q, n - m);
+		p = merge(p, m, *this, q, n - m);
 	}
-
 	template<typename T>
-	inline void List<T>::selectionSort(ListNodePosi<T> p, int n){
+	inline void List<T>::selectionSort(ListNodePosi<T> p, int n){//时间复杂度为O(n^2)
 		ListNodePosi<T> head = p->pred;
 		ListNodePosi<T> tail = p;
 		for (int i = 0; i < n; i++) tail = tail->succ;
@@ -160,14 +152,14 @@ namespace dsa {
 	}
 
 	template<typename T>
-	inline void List<T>::insertionSort(ListNodePosi<T>, int)
-	{
+	inline void List<T>::insertionSort(ListNodePosi<T> p, int n){
+		for (int i = 0; i < n; i++) {
+			emplace_back(search(p->data, i, p), p->data);
+			p = p->succ;
+			remove(p->pred);
+		}
 	}
 
-	template<typename T>
-	inline void List<T>::radixSort(ListNodePosi<T>, int)
-	{
-	}
 
 	template<typename T>
 	inline List<T>::List(List<T> const& L)
@@ -217,18 +209,18 @@ namespace dsa {
 	}
 
 	template<typename T>
-	inline ListNodePosi<T> List<T>::search(T const& e, int n, ListNodePosi<T> p) const{//时间复杂福O（n） 由于链表的实现导致的
-		while (0<=n--){
-			if ((p=p->pred)->data <= e) break;
-		}
-		return p;
+	inline ListNodePosi<T> List<T>::search(T const& e, int n, ListNodePosi<T> p) const{//时间复杂福O（n） 由于链表的实现
+		do {
+			p = p->pred; n--; 
+		} while ((-1 < n) && (e < p->data));
+		return p; 
 	}
 
 	template<typename T>
 	inline ListNodePosi<T> List<T>::selectMax(ListNodePosi<T> p, int n){
 		ListNodePosi<T> max = p;
 		for (auto current = p; 1 < n; n--) {
-			if (max->data < (current = current->succ)->data) {
+			if (max->data <= (current = current->succ)->data) {
 				max = current;
 			}	
 		}
@@ -284,6 +276,7 @@ namespace dsa {
 	template<typename T>
 	inline void List<T>::sort(ListNodePosi<T> p, int n){
 		mergeSort(p, n);
+		//insertionSort(p, n);
 	}
 
 	template<typename T>
@@ -339,10 +332,14 @@ namespace dsa {
 	template<typename VST>
 	inline void List<T>::traverse(VST& visit)
 	{
-	   auto p=first();
-	   while(p!=trailer){
-		  visit(p->data);
-		  p=p->succ;
+		traverse(first(), last(), visit);
+	}
+	template<typename T>
+	template<class VST>
+	inline void List<T>::traverse(ListNodePosi<T> begin, ListNodePosi<T> end, VST& visit) const{
+		while (begin != end) {
+		  visit(begin->data);
+		  begin = begin->succ;
 	   }
 	}
 }
