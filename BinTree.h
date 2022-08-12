@@ -54,6 +54,7 @@ namespace dsa {
 	{
 		return rc = new BinNode(e, this);
 	}
+	//约定高度为-1
 	template <typename T> class BinTree { //二叉树模板类
 	protected:
 	   int _size; BinNodePosi<T> _root; //规模、根节点
@@ -85,5 +86,17 @@ namespace dsa {
 	   bool operator== (BinTree<T> const& t) //判等器
 	   { return _root && t._root && (_root == t._root); }
 	
-	}; //BinTree
+	};
+	template<typename T>
+	inline int BinTree<T>::updateHeight(BinNodePosi<T> x){
+		return x->height = 1 + max(stature(x->lc),stature(x->rc));
+	}
+	template<typename T>
+	inline void BinTree<T>::updateHeightAbove(BinNodePosi<T> x){
+		while(x){
+			updateHeight(x);
+			x = x->parent;
+		}
+	}
+	//BinTree
 }
