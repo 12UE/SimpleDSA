@@ -19,6 +19,9 @@
     <Filter Include="Containers\Stack">
       <UniqueIdentifier>{1a25aaf5-da74-437f-bb7f-7e613ed8ee8a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Containers\Allocator">
+      <UniqueIdentifier>{ec1badda-5705-4cc3-8b2b-5ab63af24b18}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SimpleDSA.h">
@@ -64,6 +67,18 @@
       <Filter>Containers</Filter>
     </ClInclude>
     <ClInclude Include="NumericAlgo.h">
+      <Filter>Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="String.h">
+      <Filter>Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryAllocator.h">
+      <Filter>Containers\Allocator</Filter>
+    </ClInclude>
+    <ClInclude Include="Queue.h">
+      <Filter>Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="BinTree.h">
       <Filter>Containers</Filter>
     </ClInclude>
   </ItemGroup>

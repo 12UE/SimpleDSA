@@ -9,6 +9,7 @@
 #include "afxdialogex.h"
 #include<iostream>
 #include<vector>
+#include<algorithm>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -95,6 +96,21 @@ void InitConsoler() {
 	freopen("CONIN$", "r+t", stdin); // Apply for reading
 }
 
+bool paren(dsa::string exp) {
+	if (exp.empty())return true;//平凡情况
+	dsa::Stack<char> s;
+	for (auto& ch : s) {
+		if (ch == '(') {
+			s.push(ch);
+		}
+		else if (!s.empty()) {
+			s.pop();
+		}
+	}
+	return s.empty();
+}
+
+
 
 
 void CSimpleDSADlg::OnBnClickedButton1()
@@ -102,15 +118,21 @@ void CSimpleDSADlg::OnBnClickedButton1()
 	InitConsoler();
 	auto print = [](int number) {
 		std::cout << number << " ";
-		return;
 	};
-	dsa::Stack<int> stack;
+	dsa::Queue<int> que;
+	//随机插入30个数字
 	for (int i = 0; i < 30; i++) {
-		stack.push(i);
+		que.enqueue(rand() % 30);
 	}
-	stack.traverse(print);
-	std::cout<<"pop"<<std::endl;
+	for (auto& item : que) {
+		print(item);
+	}
 	for (int i = 0; i < 30; i++) {
-		print(stack.pop());
+		que.deque();
 	}
+	std::cout << "deque: " << std::endl;
+	std::cout << "size" << que.size() << std::endl;
+	
+	
+	
 }

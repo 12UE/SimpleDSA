@@ -55,9 +55,20 @@ namespace dsa {
 		const T& val) {
 		seed ^= std::hash<T>()(val) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
 	}
-
-	template<class T>
-	T rand() {
+	template<class Iter>
+	bool CheckSorted(Iter begin, Iter end) {
+		//检查有无逆序对
+		int count = 0;
+		for (Iter it = begin; it != end; ++it) {
+			if (*it < *(it + 1)) {
+				count++;
+			}
+		}
+		return (count == 0);
+	}
+	template<class Iter>
+	void Sort(Iter begin, Iter end){
 		
 	}
+	
 }
