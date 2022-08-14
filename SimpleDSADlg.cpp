@@ -128,7 +128,7 @@ void CSimpleDSADlg::OnBnClickedButton1()
 		print(item);
 	}
 	for (int i = 0; i < 30; i++) {
-		que.deque();
+		que.dequeue();
 	}
 	std::cout << "deque: " << std::endl;
 	std::cout << "size" << que.size() << std::endl;

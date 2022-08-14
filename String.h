@@ -4,13 +4,27 @@
 #include<iostream>
 #endif // MSVC_ENVIROMENT
 namespace dsa {
+	inline void strcopy(const char* src, char* dest) {
+		while (*src != '\0') {
+			*dest = *src;
+			src++;
+			dest++;
+		}
+		*dest = '\0';
+	}
+	inline int  strlength(const char* str) {
+		int length = 0;
+		while (*str != '\0') {
+			length++;
+			str++;
+		}
+		return length;
+	}
 	class string {
 	private:
 		char * m_str;
 		int m_length;
 		void releasebuffer();
-		void strcopy(const char * src, char * dest);
-		int  strlength(const char * str);
 #ifdef MSVC_ENVIROMENT
 		friend std::ostream& operator<<(std::ostream& os, const string& str) {
 			os << str.m_str;
@@ -74,22 +88,7 @@ namespace dsa {
 			m_str = nullptr;
 		}
 	}
-	inline void string::strcopy(const char * src, char * dest){
-		while (*src != '\0'){
-			*dest = *src;
-			src++;
-			dest++;
-		}
-		*dest = '\0';
-	}
-	inline int  string::strlength(const char * str){
-		int length = 0;
-		while (*str != '\0'){
-			length++;
-			str++;
-		}
-		return length;
-	}
+	
 
 	inline string::string(const char* str)
 	{

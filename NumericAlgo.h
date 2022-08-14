@@ -99,7 +99,7 @@ constexpr int N_OPTR = 9;
 		
 	}
 	inline void append(char* rpn, char optr) { //将运算符接至RPN末尾
-		   int n = strlen(rpn); //RPN当前长度（以'\0'结尾，长度n + 1）
+		   int n = strlength(rpn); //RPN当前长度（以'\0'结尾，长度n + 1）
 		   sprintf(rpn + n, "%c \0", optr); //接入指定的运算符
 	}
 	inline int facInt(int n) { //阶乘
@@ -109,13 +109,13 @@ constexpr int N_OPTR = 9;
 		return res;
 	}
 	
-	inline double calcu(char op, double b) { //执行一元运算
+	inline float calcu(char op, float b) { //执行一元运算
 		switch (op) {
-			case '!': return (double)facInt((int)b); //目前仅有阶乘，可照此方式添加
+			case '!': return (float)facInt((int)b); //目前仅有阶乘，可照此方式添加
 			default: return 0;
 		}
 	}
-	inline double calcu(double a, char op, double b) {//执行2元运算
+	inline float calcu(float a, char op, float b) {//执行2元运算
 		switch (op) {
 			case '+': return a + b;
 			case '-': return a - b;
@@ -147,7 +147,7 @@ constexpr int N_OPTR = 9;
 				if ('!' == op) //若属于一元运算符
 				opnd.push(calcu(op, opnd.pop())); //则取一个操作数，计算结果入栈
 				else { //对于其它（二元）运算符
-						double pOpnd2 = opnd.pop(), pOpnd1 = opnd.pop(); //取出后、前操作数
+						float pOpnd2 = opnd.pop(), pOpnd1 = opnd.pop(); //取出后、前操作数
 						opnd.push(calcu(pOpnd1, op, pOpnd2)); //实施二元计算，结果入栈
 					}
 					break;
