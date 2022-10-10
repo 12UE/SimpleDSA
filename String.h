@@ -77,9 +77,11 @@ namespace dsa {
 		string substr(int start, int length);
 		int compare(const char * str);
 		int compare(const string & str);
-		void swap(string & str);
 		bool empty();
+		void claer();
+		bool startwith(const char* str);
 		void pop_back();
+
 		~string();
 	};
 	inline void string::releasebuffer(){
@@ -282,19 +284,25 @@ namespace dsa {
 			return 0;
 		}
 	}
-	inline void string::swap(string& str)
-	{
-		char* temp = m_str;
-		m_str = str.m_str;
-		str.m_str = temp;
-		int temp1 = m_length;
-		m_length = str.m_length;
-		str.m_length = temp1;
-	}
 	inline bool string::empty()
 	{
 		return m_length == 0;
 	}
+
+	inline void string::claer() {
+		releasebuffer();
+		m_length = 0;
+		m_str = new char[1];
+		m_str[0] = '\0';
+	}
+	inline bool string::startwith(const char* str){
+		int length = strlength(str);
+		for (int i = 0;i< length; i++) {
+			if (m_str[i] != str[i])return false;
+		}
+		return true;
+	}
+	
 	inline void string::pop_back(){
 		if (m_length > 0)
 		{

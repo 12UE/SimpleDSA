@@ -116,23 +116,10 @@ bool paren(dsa::string exp) {
 void CSimpleDSADlg::OnBnClickedButton1()
 {
 	InitConsoler();
-	auto print = [](int number) {
-		std::cout << number << " ";
-	};
-	dsa::Queue<int> que;
-	//随机插入30个数字
-	for (int i = 0; i < 30; i++) {
-		que.enqueue(rand() % 30);
+	dsa::Vector<int> a = { 1,3,2,3,4,5,6 };
+	a.deduplicate();
+	for (auto& item : a) {
+		std::cout << item << std::endl;
 	}
-	for (auto& item : que) {
-		print(item);
-	}
-	for (int i = 0; i < 30; i++) {
-		que.dequeue();
-	}
-	std::cout << "deque: " << std::endl;
-	std::cout << "size" << que.size() << std::endl;
-	
-	
 	
 }

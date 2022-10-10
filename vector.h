@@ -23,11 +23,20 @@ namespace dsa {
 		Vector(int c = DEFAULT_CAPACITY, Rank s = 0, T v = 0) {
 			_elem = new T[_capacity = c]; for (_size = 0; _size < s; _elem[_size++] = v);
 		} //s<=c
+		template<typename ...elem>
+		Vector(elem...args) {
+			_elem = new T[_capacity =sizeof...(args)];
+			_size = 0;
+			for (auto& e : { args... }) {
+				_elem[_size++] = e;
+			}
+		}
 		Vector(T const* A, Rank n) { copyFrom(A, 0, n); }
 		Vector(T const* A, Rank lo, Rank hi) { copyFrom(A, lo, hi); } 
 		Vector(Vector<T> const& V) { copyFrom(V._elem, 0, V._size); } 
 		Vector(Vector<T> const& V, Rank lo, Rank hi) { copyFrom(V._elem, lo, hi); }
-		~Vector() { delete[] _elem; }class iterator {
+		~Vector() { delete[] _elem; }
+		class iterator {
 		private:
 			T* _ptr;
 		public:
@@ -64,6 +73,7 @@ namespace dsa {
 		Rank uniquify(); 
 		void traverse(void (*) (T& visit));
 		template <class BinFunc> void traverse(BinFunc& visit);
+		void clear();
 	};
 	template<typename T>
 	inline void Vector<T>::copyFrom(T const* A, Rank lo, Rank hi){
@@ -86,7 +96,7 @@ namespace dsa {
 	template<typename T>
 	inline void Vector<T>::shrink(){
 		if(_capacity<DEFAULT_CAPACITY<<1) return;
-		if (_size << 2 > _capacity) return;
+		if (_size << 1 > _capacity) return;//50%
 		T* oldElem = _elem;
 		_elem = new T[_capacity>>1];
 		for(int i=0;i<_size;i++)
@@ -218,6 +228,7 @@ namespace dsa {
 
 	template<typename T>
 	inline T Vector<T>::remove(Rank r){
+		if (r < 0) return T();
 		T e = _elem[r];
 		remove(r, r+1);
 		return e;
@@ -253,13 +264,13 @@ namespace dsa {
 	}
 
 	template<typename T>
-	inline Rank Vector<T>::deduplicate()
+	inline Rank Vector<T>::deduplicate()//’Î∂‘
 	{
 		int oldSize = _size;
 		Rank i = 1;
 		while (i < _size)
-			if (_elem[i] == _elem[i - 1]) remove(i--);
-			else i++;
+			(find(_elem[i], 0, i) < 0) ?
+			i++ : remove(i);
 		return oldSize - _size;
 	}
 
@@ -279,6 +290,15 @@ namespace dsa {
 	{
 		for(int i=0;i<_size;i++)
 			(*visit)(_elem[i]);
+	}
+
+	template<typename T>
+	inline void Vector<T>::clear()
+	{
+		delete[] _elem;
+		_elem = NULL;
+		_size = 0;
+		_capacity = 0;
 	}
 
 
